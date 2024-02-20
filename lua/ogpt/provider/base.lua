@@ -167,6 +167,9 @@ function Provider:process_response(response)
   local chunk = response:pop_chunk()
   local ok, json = pcall(vim.json.decode, chunk)
 
+  utils.log("DBG: ok = " .. tostring(ok), vim.log.levels.ERROR)
+  utils.log("DBG: json = " .. tostring(vim.inspect(json)), vim.log.levels.ERROR)
+
   if not ok then
     utils.log("Cannot process ollama response: \n" .. vim.inspect(chunk))
     json = {}

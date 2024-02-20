@@ -2,6 +2,11 @@ local Config = require("ogpt.config")
 local Path = require("plenary.path")
 local M = {}
 
+function joinpath_fix(path)
+  local dir_absolute = Path:new(path:absolute())
+  return dir_absolute
+end
+
 local ESC_FEEDKEY = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
 
 M.ollama_options = {
@@ -337,8 +342,9 @@ function M.format_table(tbl, indent)
   return result
 end
 
-local log_filename =
-  Path:new(vim.fn.stdpath("state")):joinpath("ogpt", "ogpt-" .. os.date("%Y-%m-%d") .. ".log"):absolute() -- convert Path object to string
+local dir_path = joinpath_fix(Path:new(vim.fn.stdpath("state")):joinpath("ogpt"))
+local filename = "ogpt-" .. os.date("%Y-%m-%d") .. ".log"
+local log_filename = dir_path:joinpath(filename):absolute() -- convert Path object to string
 
 function M.write_to_log(msg)
   local file = io.open(log_filename, "ab")
