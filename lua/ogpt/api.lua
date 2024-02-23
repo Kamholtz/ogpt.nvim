@@ -23,23 +23,16 @@ function Api:completions(custom_params, cb, opts)
 end
 
 function Api:chat_completions(response, inputs)
-  utils.log("chat_completions", vim.log.levels.DEBUG)
   local custom_params = inputs.custom_params
   local partial_result_fn = inputs.partial_result_fn
   local should_stop = inputs.should_stop or function() end
-  utils.log("chat_completions: custom_params = " .. vim.inspect(custom_params), vim.log.levels.DEBUG)
 
   -- local stream = custom_params.stream or false
   local params, _completion_url, ctx = self.provider:expand_model(custom_params)
 
-  utils.log("chat_completions: params = " .. vim.inspect(params), vim.log.levels.DEBUG)
-  utils.log("chat_completions: _completion_url = " .. vim.inspect(_completion_url), vim.log.levels.DEBUG)
-
   ctx.params = params
   ctx.provider = self.provider.name
   ctx.model = custom_params.model
-  utils.log("chat_completions: ctx = " .. vim.inspect(ctx), vim.log.levels.DEBUG)
-
   utils.log("Request to: " .. _completion_url)
   utils.log(params)
   response.ctx = ctx
@@ -69,7 +62,6 @@ function Api:chat_completions(response, inputs)
     model = params.model.name,
     messages = params.messages,
   }
-  utils.log("chat_completions: actual_params = " .. vim.inspect(actual_params), vim.log.levels.DEBUG)
 
   -- {"options":{"temperature":0.5,"top_p":0.99}, "model": "codellama", "messages": [{"content": "how can i check the version of powershell", "role": "user"}], "stream": true}
 
@@ -83,12 +75,6 @@ function Api:chat_completions(response, inputs)
     "-d",
     vim.json.encode(actual_params),
   }
-
-  utils.log("chat_completions: curl_args = " .. vim.inspect(curl_args), vim.log.levels.DEBUG)
-  utils.log("chat_completions: curl_args = " .. vim.inspect(curl_args), vim.log.levels.DEBUG)
-
-  _G.user_curl_args = curl_args
-
   for _, header_item in ipairs(self.provider:request_headers()) do
     table.insert(curl_args, header_item)
   end
@@ -106,7 +92,6 @@ end
 -- end
 
 function Api:make_call(url, params, cb, ctx, raw_chunks, state, opts)
-  utils.log("make_call", vim.log.levels.DEBUG)
   _G.user_make_call = {
     url = url,
     params = params,
@@ -122,8 +107,6 @@ function Api:make_call(url, params, cb, ctx, raw_chunks, state, opts)
   state = state or "START"
 
   TMP_MSG_FILENAME = os.tmpname()
-  _G.user_make_call.TMP_MSG_FILENAME = TMP_MSG_FILENAME
-
   local f = io.open(TMP_MSG_FILENAME, "w+")
   if f == nil then
     vim.notify("Cannot open temporary message file: " .. TMP_MSG_FILENAME, vim.log.levels.ERROR)
