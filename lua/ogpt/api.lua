@@ -57,14 +57,6 @@ function Api:chat_completions(response, inputs)
     response:set_state(response.STATE_STOPPED)
   end
 
-  local actual_params = {
-    options = params.options,
-    model = params.model.name,
-    messages = params.messages,
-  }
-
-  -- {"options":{"temperature":0.5,"top_p":0.99}, "model": "codellama", "messages": [{"content": "how can i check the version of powershell", "role": "user"}], "stream": true}
-
   -- if params.stream then
   -- local accumulate = {}
   local curl_args = {
@@ -92,15 +84,6 @@ end
 -- end
 
 function Api:make_call(url, params, cb, ctx, raw_chunks, state, opts)
-  _G.user_make_call = {
-    url = url,
-    params = params,
-    cb = cb,
-    ctx = ctx,
-    raw_chunks = raw_chunks,
-    state = state,
-    opts = opts,
-  }
   -- TODO:  to be deprecated
   ctx = ctx or {}
   raw_chunks = raw_chunks or ""

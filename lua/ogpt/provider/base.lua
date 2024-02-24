@@ -167,9 +167,6 @@ function Provider:process_response(response)
   local chunk = response:pop_chunk()
   local ok, json = pcall(vim.json.decode, chunk)
 
-  utils.log("DBG: ok = " .. tostring(ok), vim.log.levels.ERROR)
-  utils.log("DBG: json = " .. tostring(vim.inspect(json)), vim.log.levels.ERROR)
-
   if not ok then
     utils.log("Cannot process ollama response: \n" .. vim.inspect(chunk))
     json = {}
@@ -212,21 +209,15 @@ function Provider:expand_model(params, ctx)
   local _completion_url = self:completion_url()
 
   local function _expand(name, _m)
-    print("DEBUGPRINT[15]: base.lua:214: name=" .. vim.inspect(name))
-    print("DEBUGPRINT[16]: base.lua:214: _m=" .. vim.inspect(_m))
-
     if type(_m) == "table" then
-      print("DEBUGPRINT[17]: base.lua:218 (after if type(_m) == table then)")
       if _m.modify_url and type(_m.modify_url) == "function" then
         _completion_url = _m.modify_url(_completion_url)
       elseif _m.modify_url then
         _completion_url = _m.modify_url
       else
         params.model = _m.name
-        print("DEBUGPRINT[20]: base.lua:225: params.model=" .. vim.inspect(params.model))
         for _, model in ipairs(provider_models) do
           if model.name == _m.name then
-            print("DEBUGPRINT[18]: base.lua:228 (before _expand(model))")
             _expand(model.name, model)
             break
           end
@@ -236,22 +227,17 @@ function Provider:expand_model(params, ctx)
         params.model = name or _m
       end
     else
-      print("DEBUGPRINT[21]: base.lua:236 (after else)")
       for _name, model in pairs(provider_models) do
         if _name == _m then
           if type(model) == "table" then
-            print("DEBUGPRINT[22]: base.lua:240 (after if type(model) == table then)")
             _expand(_name, model)
             break
           elseif type(model) == "string" then
-            print("DEBUGPRINT[23]: base.lua:244 (after elseif type(model) == string then)")
             params.model = model
-            print("DEBUGPRINT[24]: base.lua:246: params.model=" .. vim.inspect(params.model))
           end
         end
       end
     end
-    print("DEBUGPRINT[25]: base.lua:252: params=" .. vim.inspect(params))
     return params
   end
 
