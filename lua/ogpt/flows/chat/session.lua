@@ -173,10 +173,11 @@ end
 
 function Session.get_dir()
   local dir = Path:new(vim.fn.stdpath("state")):joinpath("ogpt")
-  if not dir:exists() then
-    dir:mkdir()
+  local dir_absolute = Path:new(dir:absolute())
+  if not dir_absolute:exists() then
+    dir_absolute:mkdir()
   end
-  return dir
+  return dir_absolute
 end
 
 function Session.list_sessions()

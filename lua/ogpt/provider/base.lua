@@ -218,12 +218,14 @@ function Provider:expand_model(params, ctx)
         params.model = _m.name
         for _, model in ipairs(provider_models) do
           if model.name == _m.name then
-            _expand(model)
+            _expand(model.name, model)
             break
           end
         end
       end
-      params.model = _m or name
+      if params.model == nil then
+        params.model = name or _m
+      end
     else
       for _name, model in pairs(provider_models) do
         if _name == _m then
