@@ -41,6 +41,11 @@ function CompletionAction:get_params()
     p_rendered = p1
   end
   additional_params["prompt"] = p_rendered
+
+  Utils.log("DBG: Config.options.api_params: " .. vim.inspect(Config.options.api_params), vim.log.levels.ERROR)
+  Utils.log("DBG: self.params: " .. vim.inspect(self.params), vim.log.levels.ERROR)
+  Utils.log("DBG: additional_params: " .. vim.inspect(additional_params), vim.log.levels.ERROR)
+
   return vim.tbl_extend("force", Config.options.api_params, self.params, additional_params)
 end
 

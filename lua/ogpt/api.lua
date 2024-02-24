@@ -73,7 +73,7 @@ function Api:chat_completions(response, inputs)
     "--no-buffer",
     _completion_url,
     "-d",
-    vim.json.encode(actual_params),
+    vim.json.encode(params),
   }
   for _, header_item in ipairs(self.provider:request_headers()) do
     table.insert(curl_args, header_item)
