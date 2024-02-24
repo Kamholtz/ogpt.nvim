@@ -2,40 +2,6 @@ local Config = require("ogpt.config")
 local Path = require("plenary.path")
 local M = {}
 
-function joinpath_fix(path)
-  local dir_absolute = Path:new(path:absolute())
-  return dir_absolute
-end
-
-function ensure_path_is_plenary_path(path)
-  local path_type = type(path)
-  if path_type == "string" then
-    return Path:new(path)
-  elseif path_type == "table" then
-    return path
-  end
-
-  -- error
-  assert(false, "Expected path to be string or table but received: ", path_type)
-end
-
--- ensure_path_is_plenary_path("abc.json")
-
-function joinpath_fix_2(path1, path2)
-  local plenary_path_1 = Path:new(ensure_path_is_plenary_path(path1):absolute())
-  local plenary_path_2 = ensure_path_is_plenary_path(path2)
-  return plenary_path_1:joinpath(plenary_path_2)
-end
-
--- joinpath_fix_2(vim.fn.stdpath("state"), "ogpt"):absolute()
-
--- Path:new(vim.fn.stdpath("state")):joinpath("ogpt", "ogpt-" .. os.date("%Y-%m-%d") .. ".log"):absolute() -- convert Path object to string
-
--- function joinpath_fix_2(path1, path2)
---   local dir_absolute = Path:new(path1:absolute())
---   return dir_absolute
--- end
-
 local ESC_FEEDKEY = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
 
 M.ollama_options = {
